@@ -29,7 +29,7 @@ txt
             <td> {{item.ordem}} </td>
             <td> 
                 <button onclick="location='#'" class="btn btn-info">Detalhes </button>
-                <button onclick="location='#'"  class="btn btn-warning">Alterar </button>
+                <button onclick="location='{% url "editar_categoria" item.id %}'"  class="btn btn-warning">Alterar </button>
                 <a href="#" class="btn btn-danger" 
                 onclick="return confirm('Tem certeza que deseja remover este registro?');">Excluir</a>
             </td> 
