@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-
+from django.contrib import messages
 from .models import *
 from .forms import *
 
@@ -41,3 +41,21 @@ def editar_categoria(request, id):
     else:
          form = CategoriaForm(instance=categoria)
     return render(request, 'categoria/formulario.html', {'form': form,})
+
+def remover_categoria(request, id):
+    try:
+        categoria = Categoria.objects.get(pk=id)
+        categoria.delete() #delete deleta o objeto selecionado
+        messages.success(request, 'Registro Removido com sucesso') #mensagem de confirmação da exclusão
+    except Categoria.DoesNotExist:
+        messages.error(request, 'Registro não encontrado') #mensagem de quando o sistema não encontra o registro
+        
+    return redirect('categoria')
+
+def detalhes_categoria(request, id):
+    try:
+        categoria = Categoria.objects.get(pk=id)
+        return render(request, 'categoria/detalhes.html', {'item': categoria})
+    except Categoria.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('categoria')
