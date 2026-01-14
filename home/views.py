@@ -108,5 +108,54 @@ def detalhes_cliente(request, id):
         cliente = Cliente.objects.get(pk=id)
         return render(request, 'cliente/detalhes.html', {'item': cliente})
     except Cliente.DoesNotExist:
-        messages.error(request, 'Registro não encontrado')
+        messages.error(request, 'Não encontrado')
         return redirect('cliente')
+
+def produto(request):
+    contexto = {'lista': Produto.objects.all().order_by('-id')}
+    return render(request, 'produto/lista.html', contexto)
+
+def form_produto(request):
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Operação Concluída!')
+            return redirect('produto')
+    else:
+        form = ProdutoForm()
+    return render(request, 'produto/formulario.html', {'form': form})
+
+def editar_produto(request, id):
+    try:
+        produto = Produto.objects.get(pk=id)
+    except Produto.DoesNotExist:
+        messages.error(request, 'Não encontrado')
+        return redirect('produto')
+
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST, instance=produto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Operação Concluída')
+            return redirect('produto')
+    else:
+        form = ProdutoForm(instance=produto)
+    return render(request, 'produto/formulario.html', {'form': form})
+
+def remover_produto(request, id):
+    try:
+        produto = Produto.objects.get(pk=id)
+        produto.delete()
+        messages.success(request, 'Excluído com sucesso')
+    except Produto.DoesNotExist:
+        messages.error(request, 'Não encontrado')
+    return redirect('produto')
+
+def detalhes_produto(request, id):
+    try:
+        produto = Produto.objects.get(pk=id)
+        return render(request, 'produto/detalhes.html', {'item': produto})
+    except Produto.DoesNotExist:
+        messages.error(request, 'Não encontrado')
+        return redirect('produto')
