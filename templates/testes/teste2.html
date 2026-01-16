@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block titulo_conteudo %} Testes Variados (Múltiplos Modelos) {% endblock titulo_conteudo %}
+
+{% block conteudo %} 
+
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-body">
+            
+            <p>
+                <label for="id_categoria_nome" class="form-label fw-bold">Buscar Categoria:</label>
+                <input type="text" class="form-control autocomplete" 
+                    id="id_categoria_nome" 
+                    data-url="{% url 'buscar_dados' 'home.Categoria' %}" 
+                    data-hidden="#id_categoria"
+                    placeholder="Digite o nome da categoria...">
+                <input type="hidden" id="id_categoria">
+            </p>
+            <hr>
+
+            <p>
+                <label for="id_cliente_nome" class="form-label fw-bold">Buscar Cliente:</label>
+                <input type="text" class="form-control autocomplete" 
+                    id="id_cliente_nome" 
+                    data-url="{% url 'buscar_dados' 'home.Cliente' %}" 
+                    data-hidden="#id_cliente"
+                    placeholder="Digite o nome do cliente...">
+                <input type="hidden" id="id_cliente">
+            </p>
+            <hr>
+
+            <p>
+                <label for="id_produto_nome" class="form-label fw-bold">Buscar Produto:</label>
+                <input type="text" class="form-control autocomplete" 
+                    id="id_produto_nome" 
+                    data-url="{% url 'buscar_dados' 'home.Produto' %}" 
+                    data-hidden="#id_produto"
+                    placeholder="Digite o nome do produto...">
+                <input type="hidden" id="id_produto">
+            </p>
+
+        </div>
+    </div>
+</div>
+
+{% endblock conteudo %}

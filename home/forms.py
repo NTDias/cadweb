@@ -51,7 +51,8 @@ class ProdutoForm(forms.ModelForm):
         model = Produto
         fields = ['nome', 'preco', 'categoria','img_base64']
         widgets = {
-            'categoria': forms.Select(attrs={'class': 'form-control'}),
+            #categoria': forms.Select(attrs={'class': 'form-control'}),
+            'categoria': forms.HiddenInput  (),
             'nome':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
             'img_base64': forms.HiddenInput(), 
             # a classe money mascara a entreda de valores monetários, está em base.html
