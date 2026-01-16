@@ -29,7 +29,7 @@ def form_categoria(request):
     }
     return render(request, 'categoria/formulario.html', contexto)    
 
-
+###################### CATEGORIA ##############################
 def editar_categoria(request, id):
     categoria = Categoria.objects.get(pk=id)
     if request.method == 'POST':
@@ -60,7 +60,7 @@ def detalhes_categoria(request, id):
         messages.error(request, 'Não encontrado')
         return redirect('categoria')
 
-
+############# CLIENTE #######################
 def cliente(request):
     contexto = {
         'lista': Cliente.objects.all().order_by('-id')
@@ -111,6 +111,8 @@ def detalhes_cliente(request, id):
         messages.error(request, 'Não encontrado')
         return redirect('cliente')
 
+################## PRODUTO ##############################
+
 def produto(request):
     contexto = {'lista': Produto.objects.all().order_by('-id')}
     return render(request, 'produto/lista.html', contexto)
@@ -159,3 +161,19 @@ def detalhes_produto(request, id):
     except Produto.DoesNotExist:
         messages.error(request, 'Não encontrado')
         return redirect('produto')
+
+################### ESTOQUE ##########################3
+    
+def ajustar_estoque(request, id):
+    produto = produto = Produto.objects.get(pk=id)
+    estoque = produto.estoque # pega o objeto estoque relacionado ao produto
+    if request.method == 'POST':
+        form = EstoqueForm(request.POST, instance=estoque)
+        if form.is_valid():
+            estoque = form.save()
+            lista = []
+            lista.append(estoque.produto) 
+            return render(request, 'produto/lista.html', {'lista': lista})
+    else:
+         form = EstoqueForm(instance=estoque)
+    return render(request, 'produto/estoque.html', {'form': form,})
