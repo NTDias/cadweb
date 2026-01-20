@@ -85,3 +85,25 @@ class EstoqueForm(forms.ModelForm):
             'produto': forms.HiddenInput(),  # Campo oculto para armazenar o ID do produto
             'qtde':forms.TextInput(attrs={'class': 'inteiro form-control',}),
     }
+
+############ PEDIDO #################################
+
+class PedidoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['cliente']
+        widgets = {
+            'cliente': forms.HiddenInput(),  # Campo oculto para armazenar o ID
+        }
+
+class ItemPedidoForm(forms.ModelForm):
+    class Meta:
+        model = ItemPedido
+        fields = ['pedido','produto', 'qtde']
+
+
+        widgets = {
+            'pedido': forms.HiddenInput(),  # Campo oculto para armazenar o ID
+            'produto': forms.HiddenInput(),  # Campo oculto para armazenar o ID
+            'qtde':forms.TextInput(attrs={'class': 'form-control',}),
+        }

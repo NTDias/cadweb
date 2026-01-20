@@ -25,7 +25,7 @@
             <td>{{item.cpf}}</td>
             <td>{{item.datanascimento}}</td>
             <td> 
-                <button onclick="location='#'" class="btn btn-primary btn-sm">Novo Pedido</button>
+                <button onclick="location='{% url 'novo_pedido' item.id %}'" class="btn btn-primary btn-sm">Novo Pedido</button>
                 <button onclick="location='{% url 'editar_cliente' item.id %}'"  class="btn btn-warning btn-sm">Editar</button>
                 <a href="{% url 'remover_cliente' item.id %}" class="btn btn-danger btn-sm" 
                    onclick="return confirm('Tem certeza que deseja remover este registro?');">Remover</a>
