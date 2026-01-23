@@ -92,6 +92,18 @@ class Pedido(models.Model):
         if self.data_pedido:
             return self.data_pedido.strftime('%d/%m/%Y %H:%M')
         return None 
+   
+    @property
+    def total(self):
+        """Calcula o total de todos os itens no pedido."""
+        # Soma (quantidade * preço) de todos os itens relacionados a este pedido
+        total = sum(item.qtde * item.preco for item in self.itempedido_set.all())
+        return total
+
+    @property
+    def qtdeItens(self):
+        """Conta a quantidade de itens (linhas) no pedido."""
+        return self.itempedido_set.count()
 
 
 class ItemPedido(models.Model):
@@ -103,3 +115,8 @@ class ItemPedido(models.Model):
 
     def __str__(self):
         return f"{self.produto.nome} (Qtd: {self.qtde}) - Preço Unitário: {self.preco}"  
+    
+    @property
+    def total(self):
+        """Calcula o total do item (quantidade * preço)."""
+        return self.qtde * self.preco

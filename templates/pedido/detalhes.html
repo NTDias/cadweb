@@ -1,20 +1,14 @@
 {% extends "base.html" %}
 
-
 {% block titulo_conteudo %} Detalhes do Pedido #{{ pedido.id }} {% endblock titulo_conteudo %}
 
-
 {% block conteudo %} 
-
 
 <p><strong>Cliente:</strong> {{ pedido.cliente.nome }}</p>
 <p><strong>Data do Pedido:</strong> {{ pedido.data_pedidof }}</p>
 <p><strong>Status:</strong> {{ pedido.get_status_display }}</p>
 
-
 <hr>
-<!-- Formulário para adicionar novos produtos -->
-
 <h5>Adicionar Produto</h5>
 <form method="POST">
     {% csrf_token %}
@@ -31,23 +25,13 @@
     <button type="button" onclick="location=''" class="btn btn-primary btn-sm">Registrar Pagamento</button>
 </form>
 
-
-
-
-
-
-
-
-
-
-
 <hr>
-<!-- Tabela de Itens já adicionados ao pedido -->
-
 <h5>Itens do Pedido</h5>
 <table class="table table-striped">
     <thead>
         <tr>
+            <th>ID</th>
+            <th>#</th>
             <th>Produto</th>
             <th>Quantidade</th>
             <th>Preço Unitário (R$)</th>
@@ -58,32 +42,32 @@
     <tbody>
         {% for item in pedido.itempedido_set.all %}
         <tr>
+            <td>{{ item.produto.id }}</td>
+            <td>
+                {% if item.produto.img_base64 %}
+                    <img src="{{ item.produto.img_base64 }}" style="max-height: 40px; max-width: 40px;" alt="Img">
+                {% else %}
+                    -
+                {% endif %}
+            </td>
             <td>{{ item.produto.nome }}</td>
             <td>{{ item.qtde }}</td>
             <td>{{ item.preco }}</td>
-            <td>?</td>
+            <td>{{ item.total }}</td>
             <td>
-              <a href="#" class="btn btn-warning btn-sm">Editar</a>
-              <a href="#" class="btn btn-danger btn-sm" 
+              <a href="{% url 'editar_item_pedido' item.id %}" class="btn btn-warning btn-sm">Editar</a>
+              <a href="{% url 'remover_item_pedido' item.id %}" class="btn btn-danger btn-sm" 
               onclick="return confirm('Tem certeza que deseja remover este item?');">Remover</a>
             </td>         
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
+<div class="text-end mt-3">
+    <h4>Total do Pedido: R$ {{ pedido.total }}</h4>
+</div>
 
 {% endblock conteudo %}
-
 
 {% block javascript %}
 <script>
@@ -100,6 +84,4 @@
       }
     });
   </script>
-
-
 {% endblock javascript %}

@@ -30,8 +30,8 @@
         <td>{{ pedido.cliente.nome }}</td>
         <td>{{ pedido.data_pedidof}}</td>
         <td>{{ pedido.get_status_display }}</td>
-        <td>?</td>  
-        <td>?</td>      
+        <td>{{ pedido.qtdeItens }}</td>  
+        <td>{{ pedido.total }}</td>      
         <td>
           <button onClick="location='{%url 'detalhes_pedido'  pedido.id%}'" type="button" class="btn btn-primary btn-sm">Detalhes</button>
           <a href="" class="btn btn-danger btn-sm" 
