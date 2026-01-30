@@ -372,8 +372,34 @@ def remover_item_pedido(request, id):
         messages.error(request, 'Item não encontrado')
         return redirect('pedido')
 
+def form_pagamento(request,id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+    except Pedido.DoesNotExist:
+        # Caso o registro não seja encontrado, exibe a mensagem de erro
+        messages.error(request, 'Registro não encontrado')
+        return redirect('pedido')  # Redireciona para a listagem    
+    
+    if request.method == 'POST':
+        form = PagamentoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Operação realizada com Sucesso')
+    # prepara o formulário para um novo pagamento
+    pagamento = Pagamento(pedido=pedido)
+    form = PagamentoForm(instance=pagamento)
+    contexto = {
+        'pedido': pedido,
+        'form': form,
+    }    
+    return render(request, 'pedido/pagamento.html',contexto)
 
-
-
-
+def nota_fiscal(request, id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+    except Pedido.DoesNotExist:
+        # Caso o registro não seja encontrado, exibe a mensagem de erro
+        messages.error(request, 'Registro não encontrado')
+        return redirect('pedido')  # Redireciona para a listagem    
+    return render(request, 'pedido/nota_fiscal.html', {'pedido': pedido})
 

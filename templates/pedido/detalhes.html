@@ -22,7 +22,13 @@
     </p>
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary btn-sm">Salvar Produto</button>
-    <button type="button" onclick="location=''" class="btn btn-primary btn-sm">Registrar Pagamento</button>
+    <button type="button" onclick="location='{% url 'form_pagamento' pedido.id %}'" class="btn btn-primary btn-sm">Registrar Pagamento</button>
+    <div class="text-end mt-3">
+    <p>Total do Pedido: R$ {{ pedido.total }}</p>
+    <p>Total Pago: R$ {{ pedido.total_pago }}</p>
+    <p>Débito: R$ {{ pedido.debito }}</p>
+    </div>
+     <a href="{% url 'pedido' %}" class="btn btn-secondary btn-sm">Voltar</a>
 </form>
 
 <hr>

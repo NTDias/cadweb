@@ -107,3 +107,34 @@ class ItemPedidoForm(forms.ModelForm):
             'produto': forms.HiddenInput(),  # Campo oculto para armazenar o ID
             'qtde':forms.TextInput(attrs={'class': 'form-control',}),
         }
+
+
+########## PAGAMENTO ###################
+
+class PagamentoForm(forms.ModelForm):
+    class Meta:
+        model = Pagamento
+        fields = ['pedido','forma','valor']
+        widgets = {
+            'pedido': forms.HiddenInput(),  # Campo oculto para armazenar o ID
+            # Usando Select para renderizar as opções
+            'forma': forms.Select(attrs={'class': 'form-control'}),  
+            'valor':forms.TextInput(attrs={
+                'class': 'money form-control',
+                'maxlength': 500,
+                'placeholder': '0.000,00'
+            }),
+         }
+        
+    def __init__(self, *args, **kwargs):
+            super(PagamentoForm, self).__init__(*args, **kwargs)
+            self.fields['valor'].localize = True
+            self.fields['valor'].widget.is_localized = True   
+
+    def clean_valor(self):
+        valor = self.cleaned_data.get('valor')   
+        if valor <= 0:
+            raise forms.ValidationError("O Valor deve ser maior que zero.")     
+        return valor
+    
+      
