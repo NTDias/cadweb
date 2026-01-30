@@ -104,7 +104,19 @@ class Pedido(models.Model):
     def qtdeItens(self):
         """Conta a quantidade de itens (linhas) no pedido."""
         return self.itempedido_set.count()
+    
+    @property
+    def pagamentos(self):
+        return self.pagamento_set.all()
 
+    @property
+    def total_pago(self):
+        return sum(p.valor for p in self.pagamentos)
+
+    @property
+    def debito(self):
+        return self.total - self.total_pago
+    
 
 class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
@@ -156,12 +168,5 @@ class Pagamento(models.Model):
         return Pagamento.objects.filter(pedido=self)    
     
     #Calcula o total de todos os pagamentos do pedido
-    @property
-    def total_pago(self):
-        total = sum(pagamento.valor for pagamento in self.pagamentos.all())
-        return total    
-    
-    @property
-    def debito(self):
-        return "implementar"
+ 
 

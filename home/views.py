@@ -371,6 +371,22 @@ def remover_item_pedido(request, id):
     except ItemPedido.DoesNotExist:
         messages.error(request, 'Item não encontrado')
         return redirect('pedido')
+@login_required
+def remover_pedido(request, id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+        # Opcional: Implementar lógica para devolver itens ao estoque antes de deletar
+        for item in pedido.itempedido_set.all():
+            estoque = item.produto.estoque
+            estoque.qtde += item.qtde
+            estoque.save()
+            
+        pedido.delete()
+        messages.success(request, 'Pedido removido com sucesso e estoque atualizado.')
+    except Pedido.DoesNotExist:
+        messages.error(request, 'Pedido não encontrado.')
+        
+    return redirect('pedido')
 
 def form_pagamento(request,id):
     try:
