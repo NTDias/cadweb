@@ -1,4 +1,6 @@
+from decimal import Decimal
 import locale
+import random
 from django.db import models
 
 
@@ -83,6 +85,41 @@ class Pedido(models.Model):
     data_pedido = models.DateTimeField(auto_now_add=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=NOVO)
 
+    ALIQUOTA_ICMS = 18.0
+    ALIQUOTA_ICMS_ST = 5.0  # Exemplo, pode variar conforme o produto e estado
+    ALIQUOTA_IPI = 4.0  # Se aplicável ao produto
+    ALIQUOTA_PIS = 1.65
+    ALIQUOTA_COFINS = 7.6
+
+    @property
+    def valor_icms(self):
+        # Convertendo a alíquota para Decimal antes de multiplicar
+        return (self.total * Decimal(str(self.ALIQUOTA_ICMS))) / 100
+
+    @property
+    def valor_ipi(self):
+        return (self.total * Decimal(str(self.ALIQUOTA_IPI))) / 100
+
+    @property
+    def valor_pis(self):
+        return (self.total * Decimal(str(self.ALIQUOTA_PIS))) / 100
+
+    @property
+    def valor_cofins(self):
+        return (self.total * Decimal(str(self.ALIQUOTA_COFINS))) / 100
+
+    @property
+    def total_impostos(self):
+        return self.valor_icms + self.valor_ipi + self.valor_pis + self.valor_cofins
+
+    @property
+    def total_com_impostos(self):
+        return self.total + self.total_impostos
+    @property
+    def chave_acesso(self):
+        """Gera uma chave fictícia de 44 dígitos."""
+        random_part = "".join([str(random.randint(0, 9)) for _ in range(35)])
+        return f"312410{random_part}{self.id:03d}".zfill(44)
 
     def __str__(self):
             return f"Pedido {self.id} - Cliente: {self.cliente.nome} - Status: {self.get_status_display()}"

@@ -1,147 +1,120 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nota Fiscal - Pedido {{ pedido.id }}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-        }
-        .container {
-            width: 800px;
-            margin: auto;
-            border: 1px solid black;
-            padding: 10px;
-        }
-        .header, .footer {
-            text-align: center;
-            font-weight: bold;
-        }
-        .box {
-            border: 1px solid black;
-            padding: 5px;
-            margin-bottom: 5px;
-        }
-        .details-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .details-table th, .details-table td {
-            border: 1px solid black;
-            padding: 5px;
-            text-align: left;
-        }
-        .details-table th {
-            background-color: #f0f0f0;
-        }
-        .small-text {
-            font-size: 10px;
-        }
-        .total {
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .no-print {
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
+{% extends 'base.html' %}
 
+{% block titulo_conteudo %} Nota Fiscal Eletrônica {% endblock %}
 
-    <div class="container">
-        <div class="header">DANFE - Documento Auxiliar da Nota Fiscal Eletrônica</div>
-
-
-        <div class="box">
-            <strong>CHAVE DE ACESSO:</strong> {{ pedido.chave_acesso }}
+{% block conteudo %}
+<div class="container border p-4 bg-white">
+    <div class="row border mb-2">
+        <div class="col-md-4 border-end p-3 text-center">
+            <h5>{{ pedido.cliente.nome }}</h5>
+            <p class="small">CPF: {{ pedido.cliente.cpf }}</p>
         </div>
-
-
-        <div class="box">
-            <strong>Destinatário:</strong> {{ pedido.cliente.nome }}<br>
-            <strong>Data Nascimento:</strong> {{ pedido.cliente.datanascimento }}<br>            
-            <strong>CPF/CNPJ:</strong> {{ pedido.cliente.cpf }}
+        <div class="col-md-4 border-end p-3 text-center">
+            <strong>DANFE</strong><br>
+            <small>Documento Auxiliar da Nota Fiscal Eletrônica</small>
         </div>
-
-
-        <div class="box">
-            <table class="details-table">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Descrição</th>
-                        <th>Qtd</th>
-                        <th>Valor Unitário</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in pedido.itempedido_set.all %}
-                    <tr>
-                        <td>{{ item.produto.id }}</td>
-                        <td>{{ item.produto.nome }}</td>
-                        <td>{{ item.qtde }}</td>
-                        <td class="small-text">R$ {{ item.preco }}</td>
-                        <td class="small-text">R$ {{ item.total }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="col-md-4 p-3 text-center">
+            <strong>Nº: {{ pedido.id|stringformat:"09d" }}</strong><br>
+            <strong>SÉRIE: 001</strong>
         </div>
-
-
-        <div style="font-family:monospace" class="box">
-            <div style="display: flex; justify-content: space-between;">
-                <div><strong>ICMS.......:</strong> R$ {{ pedido.icms }}</div>
-                <div><strong>IPI........:</strong> R$ {{ pedido.ipi }}</div>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-                <div><strong>PIS........:</strong> R$ {{ pedido.pis }}</div>
-                <div><strong>COFINS.....:</strong> R$ {{ pedido.cofins }}</div>
-            </div>
-        </div>
-        
-
-
-        <div style="font-family:monospace" class="box">
-            <strong>Total......:</strong> R$ {{ pedido.total }}<br>
-            <strong>Impostos...:</strong> R$ {{ pedido.total_impostos }}<br>
-            <strong>Valor Final:</strong> R$ {{ pedido.total_com_impostos }}
-        </div>
-
-
-        <div class="footer">Recebemos os produtos constantes nesta nota fiscal.</div>
-
-
     </div>
 
-
-    <div class="no-print">
-        <button onclick="gerarPDF()">Baixar Nota Fiscal em PDF</button>
+    <div class="row border mb-3">
+        <div class="col-12 p-2 text-center bg-light">
+            <small class="d-block">CHAVE DE ACESSO</small>
+            <span class="h6 font-monospace" style="letter-spacing: 2px;">{{ pedido.chave_acesso }}</span>
+        </div>
     </div>
 
+    <div class="row border mb-3">
+        <div class="col-12 bg-secondary text-white p-1 ps-2"><small>DESTINATÁRIO / REMETENTE</small></div>
+        <div class="col-md-8 p-2">
+            <small class="text-muted d-block">NOME / RAZÃO SOCIAL</small>
+            <span>{{ pedido.cliente.nome }}</span>
+        </div>
+        <div class="col-md-4 p-2">
+            <small class="text-muted d-block">CPF / CNPJ</small>
+            <span>{{ pedido.cliente.cpf }}</span>
+        </div>
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
-    <script>
-        function gerarPDF() {
-            const { jsPDF } = window.jspdf;
-    
-            html2canvas(document.querySelector('.container')).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const doc = new jsPDF('p', 'mm', 'a4');
-    
-                doc.addImage(imgData, 'PNG', 10, 10, 190, 0);
-                doc.save('NotaFiscal_{{pedido.id}}.pdf');
-            });
-        }
-    </script>
+    <div class="row">
+        <table class="table table-bordered table-sm">
+            <thead class="bg-light">
+                <tr class="small">
+                    <th>CÓDIGO</th>
+                    <th>DESCRIÇÃO DO PRODUTO</th>
+                    <th>QTD</th>
+                    <th>VLR. UNIT</th>
+                    <th>VLR. TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pedido.itempedido_set.all %}
+                <tr>
+                    <td>{{ item.produto.id }}</td>
+                    <td>{{ item.produto.nome }}</td>
+                    <td>{{ item.qtde }}</td>
+                    <td>R$ {{ item.preco }}</td>
+                    <td>R$ {{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
+    <div class="row border mt-2">
+        <div class="col-12 bg-secondary text-white p-1 ps-2"><small>CÁLCULO DO IMPOSTO</small></div>
+        <div class="col-md-2 border-end p-1 text-center">
+            <small class="text-muted d-block">VALOR ICMS (18%)</small>
+            <strong>R$ {{ pedido.valor_icms|floatformat:2 }}</strong>
+        </div>
+        <div class="col-md-2 border-end p-1 text-center">
+            <small class="text-muted d-block">VALOR IPI (4%)</small>
+            <strong>R$ {{ pedido.valor_ipi|floatformat:2 }}</strong>
+        </div>
+        <div class="col-md-2 border-end p-1 text-center">
+            <small class="text-muted d-block">VALOR PIS (1.65%)</small>
+            <strong>R$ {{ pedido.valor_pis|floatformat:2 }}</strong>
+        </div>
+        <div class="col-md-3 border-end p-1 text-center">
+            <small class="text-muted d-block">COFINS (7.6%)</small>
+            <strong>R$ {{ pedido.valor_cofins|floatformat:2 }}</strong>
+        </div>
+        <div class="col-md-3 p-1 text-center">
+            <small class="text-muted d-block">TOTAL DA NOTA</small>
+            <strong>R$ {{ pedido.total_com_impostos|floatformat:2 }}</strong>
+        </div>
+    </div>
 
-</body>
-</html>
+    <div class="row mt-4">
+        <div class="col-md-8 border p-2 bg-light">
+            <small class="d-block text-muted">INFORMAÇÕES COMPLEMENTARES</small>
+            <p class="small mb-0">Emitido em: {{ pedido.data_pedidof }}</p>
+            <p class="small mb-0 text-uppercase">Total Pago: R$ {{ pedido.total_pago }} | Débito Restante: R$ {{ pedido.debito }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <h5 class="mt-3">VALOR TOTAL: R$ {{ pedido.total_com_impostos|floatformat:2 }}</h5>
+        </div>
+    </div>
+
+    <div class="text-center mt-5 no-print">
+        <button onclick="window.print();" class="btn btn-dark shadow-sm">
+            <i class="fas fa-print me-2"></i> Imprimir Nota Fiscal
+        </button>
+        <a href="{% url 'detalhes_pedido' pedido.id %}" class="btn btn-outline-secondary ms-2">
+            Voltar ao Pedido
+        </a>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .no-print { display: none !important; }
+        .sidebar, .navbar, .card-header { display: none !important; }
+        .content { margin-left: 0 !important; padding: 0 !important; }
+        .container { width: 100% !important; max-width: none !important; border: none !important; }
+    }
+    .font-monospace { font-family: 'Courier New', Courier, monospace; }
+</style>
+{% endblock %}
